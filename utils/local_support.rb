@@ -1,20 +1,20 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-$:.unshift "lib"
 require 'slop'
 require 'progress'
-require 'rlp/wiki'
 require 'cycr'
 require 'colors'
 require 'csv'
 require 'set'
 require 'rod/rest'
-require 'syntax'
-require 'mapping'
 require 'typhoeus'
 require 'typhoeus/adapters/faraday'
-require 'nouns/nouns'
+
+require 'wiktionary/noun'
+require 'cyclopedio/wiki'
+require 'cyclopedio/syntax'
+require 'cyclopedio/mapping'
 
 options = Slop.new do
   banner "#{$PROGRAM_NAME} -d database -o mapping.csv [-p port] [-h host] [-x offset] [-l limit] [-c c:s:n]\n"+
@@ -48,7 +48,7 @@ include Cyclopedio::Wiki
 include Cyclopedio::Mapping
 
 cyc = Cyc::Client.new(port: options[:port], host: options[:host], cache: true)
-name_service = Service::CycNameService.new(cyc)
+name_service = Cyc::Service::NameService.new(cyc)
 black_list_reader = BlackListReader.new(options[:"black-list"])
 filter_factory = Filter::Factory.new(cyc: cyc, black_list: black_list_reader.read)
 candidate_generator = CandidateGenerator.
@@ -69,7 +69,7 @@ context_provider = ContextProvider.new(rlp_services: services)
 merger = Service::TermMerger.new(cyc: cyc)
 mulitiplier = CandidateMultiplier.new(merger: merger, black_list: black_list_reader.read, name_service: name_service)
 mapping_service = Service::CategoryMappingService.
-  new(candidate_generator: candidate_generator context_provider: context_provider, cyc: cyc, multiplier: mulitiplier,
+  new(candidate_generator: candidate_generator, context_provider: context_provider, cyc: cyc, multiplier: mulitiplier,
       verbose: options[:verbose],talkative: options[:talkative])
 
 
