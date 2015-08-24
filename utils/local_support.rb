@@ -34,6 +34,7 @@ options = Slop.new do
   on :v, :verbose, "Display verbose messages (progress is suppresed)"
   on :V, :talkative, "Display detailed messages about potential and matched links (isa/genls)"
   on :S=, :"selected-categories", "File with names of selected categories to be mapped (CSV, first column)"
+  on :r=, :distance, "The distance between the disambiguated category and its relatives", default: 1, as: Integer
 end
 
 begin
@@ -54,7 +55,9 @@ filter_factory = Filter::Factory.new(cyc: cyc, black_list: black_list_reader.rea
 candidate_generator = CandidateGenerator.
   new(cyc: cyc, name_service: name_service,
       category_filters: filter_factory.filters(options[:"category-filters"]),
-      article_filters: filter_factory.filters(options[:"article-filters"]))
+      article_filters: filter_factory.filters(options[:"article-filters"]),
+      nouns: Wiktionary::Noun.new
+)
 
 services = {}
 if options[:services]
@@ -64,7 +67,7 @@ if options[:services]
     services[id] = Rod::Rest::Client.new(http_client: connection,proxy_cache: cache)
   end
 end
-context_provider = ContextProvider.new(rlp_services: services)
+context_provider = ContextProvider.new(remote_services: services,distance: options[:distance])
 
 merger = Service::TermMerger.new(cyc: cyc)
 mulitiplier = CandidateMultiplier.new(merger: merger, black_list: black_list_reader.read, name_service: name_service)
