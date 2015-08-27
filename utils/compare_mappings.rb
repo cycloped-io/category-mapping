@@ -47,7 +47,7 @@ threshold = options[:threshold]
 reference_name = extract_file_name(options[:reference])
 validated_name = extract_file_name(options[:validated])
 cyc = Cyc::Client.new(port: options[:port], host: options[:host], cache: true)
-name_service = Cyclopedio::Mapping::Service::CycNameService.new(cyc)
+name_service = Cyc::Service::NameService.new(cyc)
 
 mappings = []
 cyc_names = {}

@@ -2,12 +2,11 @@
 # encoding: utf-8
 
 require 'bundler/setup'
-$:.unshift "lib"
 require 'slop'
 require 'csv'
 require 'progress'
 require 'jaro_winkler'
-require 'mapping'
+require 'cyclopedio/mapping'
 
 
 options = Slop.new do
@@ -19,7 +18,7 @@ options = Slop.new do
   on :a=, :map_output, "Output file with mapping and MAP probabilities"
   on :e=, :mle_output, "Output file with mapping MLE probabilities"
   on :l=, :limit, "Limit reading of concepts to first n entries", as: Integer, default: 0
-  on :b, :bijective, "The resaluts are bijective (i.e. 1-to-1)", as: Boolean, default: false
+  on :b, :bijective, "The resaluts are bijective (i.e. 1-to-1)"
 end
 
 begin
@@ -60,7 +59,7 @@ CSV.open(options[:output],"w") do |output|
         end
         candidates = []
         row.each_slice(4) do |tuple|
-          candidate = Mapping::Candidate.new(*tuple)
+          candidate = Cyclopedio::Mapping::Candidate.new(*tuple)
           #if candidate.probability > 0
             candidates << candidate
             total += 1
@@ -74,10 +73,10 @@ CSV.open(options[:output],"w") do |output|
   end
   mean = mapping.inject(0){|s,(k,vs)| s + vs.inject(0){|ss,v| ss + v.mle_probability } } / total.to_f
   variance = mapping.inject(0){|s,(k,vs)| s + vs.inject(0){|ss,v| ss + (mean - v.mle_probability) ** 2 } } / (total.to_f - 1)
-  Mapping::Candidate.mean_probability = mean
-  Mapping::Candidate.probability_variance = variance
+  Cyclopedio::Mapping::Candidate.mean_probability = mean
+  Cyclopedio::Mapping::Candidate.probability_variance = variance
 
-  puts "alpha / beta %.2f %.2f" % [Mapping::Candidate.alpha,Mapping::Candidate.beta]
+  puts "alpha / beta %.2f %.2f" % [Cyclopedio::Mapping::Candidate.alpha,Cyclopedio::Mapping::Candidate.beta]
 
   reverse_map = Hash.new{|h,e| h[e] = [] }
   mapping.each.with_progress do |(category_name,mapped_name),candidates|
