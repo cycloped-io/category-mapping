@@ -27,7 +27,6 @@ options = Slop.new do
             'n - noun, r - rewrite of, l - lower case, f - function, c|i - collection or individual, b - black list, d - ill-defined', default: 'c:r:f:l:d'
   on :a=, :'article-filters', 'Filters for articles: as above', default: 'c|i:r:f:l:d'
   on :b=, :'black-list', 'File with black list of Cyc abstract types'
-  on :e, :core, 'only exact label candidates (core)'
 end
 
 begin
