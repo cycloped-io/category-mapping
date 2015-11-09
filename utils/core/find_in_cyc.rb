@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-$:.unshift 'lib'
 require 'slop'
 require 'progress'
 require 'cycr'
@@ -16,7 +15,7 @@ require 'cyclopedio/syntax'
 require 'cyclopedio/mapping'
 
 options = Slop.new do
-  banner "#{$PROGRAM_NAME} -o core_candidates.csv -d database_path -r\n"+
+  banner "#{$PROGRAM_NAME} -o core_candidates.csv -d database_path\n"+
              'Generate Cyc candidates for core categories'
 
   on :d=, :database, 'ROD database with Wikipedia data', required: true
