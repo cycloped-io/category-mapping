@@ -94,6 +94,7 @@ GEM
     rubytree (0.9.6)
       json (~> 1.8)
       structured_warnings (~> 0.2)
+    rwordnet (1.0.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -127,6 +128,7 @@ DEPENDENCIES
   rod-rest
   rr (~> 1.1.2)
   rspec (~> 2.0)
+  rwordnet
   slop (~> 3.6.0)
   typhoeus
   wiktionary

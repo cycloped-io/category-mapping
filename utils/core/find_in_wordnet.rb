@@ -40,24 +40,8 @@ include Cyclopedio::Mapping
 
 Database.instance.open_database(options[:database])
 
-
-
-@nouns = Wiktionary::Noun.new
-
-def singularize_name_nouns(name, head)
-  names = [name]
-  singularized_heads = @nouns.singularize(head)
-  if not singularized_heads.nil?
-    singularized_heads.each do |singularized_head|
-      names << name.sub(/\b#{Regexp.quote(head)}\b/, singularized_head)
-    end
-  end
-  names
-end
-
 wikipedia_category_utils = Cyclopedio::Mapping::WikipediaCategoryUtils.new
 
-count=0
 CSV.open(options[:output], 'w') do |output|
   Category.with_progress do |category|
     next unless category.regular?
@@ -69,22 +53,15 @@ CSV.open(options[:output], 'w') do |output|
       lemmas = WordNet::Lemma.find_all(name.downcase.gsub(' ','_'))
       synsets = lemmas.map { |lemma| lemma.synsets }.flatten
       wordnet_candidates.merge(synsets)
-      # p name, lemmas
-      # break if !lemmas.empty?
     end
 
-    # p wordnet_candidates.size, wordnet_candidates
+
     wordnet_candidates.reject!{|synset| synset.words.all?{|word| word!=word.downcase}}
-    # p wordnet_candidates.size, wordnet_candidates
-    # p
+
     if !wordnet_candidates.empty?
-      count+=1
-      p category.name
+      output << [category.name]+ wordnet_candidates.flat_map{|synset| [synset.pos, synset.pos_offset, synset.gloss]}
     end
-    # p category, wordnet_candidates
   end
 end
 
 Database.instance.close_database
-
-p count
