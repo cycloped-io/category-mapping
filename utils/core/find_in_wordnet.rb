@@ -40,14 +40,16 @@ include Cyclopedio::Mapping
 
 Database.instance.open_database(options[:database])
 
-wikipedia_category_utils = Cyclopedio::Mapping::WikipediaCategoryUtils.new
+nouns = Wiktionary::Noun.new
+parse_tree_factory = Cyclopedio::Syntax::Stanford::Converter
 
 CSV.open(options[:output], 'w') do |output|
   Category.with_progress do |category|
     next unless category.regular?
     next unless category.plural?
 
-    names = [category.name] + wikipedia_category_utils.singularize_name(category.name, wikipedia_category_utils.category_head(category))
+
+    names = [category.name] + nouns.singularize_name(category.name, Cyclopedio::Syntax::NameDecorator.new(category, parse_tree_factory: parse_tree_factory).category_head)
     wordnet_candidates = Set.new
     names.each do |name|
       lemmas = WordNet::Lemma.find_all(name.downcase.gsub(' ','_'))

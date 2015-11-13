@@ -30,6 +30,12 @@ PATH
     cyclopedio-wiki (0.1.0)
       rod (~> 0.7.4.0)
 
+PATH
+  remote: ../wiktionary/
+  specs:
+    wiktionary (0.1.1)
+      unicode_utils
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -105,8 +111,6 @@ GEM
     typhoeus (0.7.3)
       ethon (>= 0.7.4)
     unicode_utils (1.4.0)
-    wiktionary (0.1.1)
-      unicode_utils
 
 PLATFORMS
   ruby
@@ -131,4 +135,4 @@ DEPENDENCIES
   rwordnet
   slop (~> 3.6.0)
   typhoeus
-  wiktionary
+  wiktionary!
