@@ -8,7 +8,7 @@ gem 'slop', "~> 3.6.0"
 gem 'rod', "~> 0.7.4.1"
 gem 'cycr', '~> 0.2.7'
 gem 'rr', '~> 1.1.2'
-gem 'wiktionary'
+gem 'wiktionary', :path => '../wiktionary/'
 gem 'rod-rest'
 gem 'rspec', '~> 2.0'
 gem 'colors'
@@ -19,3 +19,4 @@ gem 'iconv'
 gem 'concurrent-ruby-ext'
 gem 'typhoeus'
 gem 'jaro_winkler'
+gem 'rwordnet'
